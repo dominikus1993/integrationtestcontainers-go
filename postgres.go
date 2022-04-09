@@ -32,7 +32,7 @@ type PostgresContainer struct {
 	ConnectionString string
 }
 
-func NewPostgreSqlContainer(ctx context.Context, config *PostgresContainerConfiguration) (*PostgresContainer, error) {
+func StartPostgreSqlContainer(ctx context.Context, config *PostgresContainerConfiguration) (*PostgresContainer, error) {
 	var port string = getValueOrDefault(fmt.Sprint(config.Port), "5432")
 	req := testcontainers.ContainerRequest{
 		Image:        getValueOrDefault(config.Image, DefaultPostgresContainerConfiguration.Image),

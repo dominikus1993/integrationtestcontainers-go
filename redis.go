@@ -9,37 +9,29 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-type MongoContainerConfiguration struct {
+type RedisContainerConfiguration struct {
 	Image       string
 	Port        int
 	ExposedPort int
-	Username    string
-	Password    string
 }
 
-var DefaultMongoContainerConfiguration = &MongoContainerConfiguration{
-	Image:       "mongo:5",
-	Port:        27017,
-	ExposedPort: 27017,
-	Username:    "",
-	Password:    "",
+var DefaultRedisContainerConfiguration = &RedisContainerConfiguration{
+	Image:       "redis:6",
+	Port:        6379,
+	ExposedPort: 6379,
 }
 
-type MongoContainer struct {
+type RedisContainer struct {
 	testcontainers.Container
 	ConnectionString string
 }
 
-func StartMongoDbContainer(ctx context.Context, config *MongoContainerConfiguration) (*MongoContainer, error) {
+func StartRedisContainer(ctx context.Context, config *RedisContainerConfiguration) (*RedisContainer, error) {
 	req := testcontainers.ContainerRequest{
 		Image:        getValueOrDefault(config.Image, DefaultMongoContainerConfiguration.Image),
 		ExposedPorts: []string{fmt.Sprintf("%d/tcp", config.ExposedPort)},
-		WaitingFor:   wait.NewExecStrategy([]string{"mongo", fmt.Sprintf("localhost:%d", config.Port), "--eval", "db.runCommand(\"ping\").ok", "--quiet"}),
+		WaitingFor:   wait.ForLog("* Ready to accept connections"),
 	}
-	if config.Username != "" && config.Password != "" {
-		req.Env = map[string]string{"MONGO_INITDB_ROOT_USERNAME": config.Username, "MONGO_INITDB_ROOT_PASSWORD": config.Password}
-	}
-
 	mongoC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
 		Started:          true,
@@ -56,6 +48,6 @@ func StartMongoDbContainer(ctx context.Context, config *MongoContainerConfigurat
 	if err != nil {
 		return nil, err
 	}
-	mongoConnection := fmt.Sprintf("mongodb://%s:%s", host, port.Port())
-	return &MongoContainer{mongoC, mongoConnection}, nil
+	mongoConnection := fmt.Sprintf("redis://%s:%s", host, port.Port())
+	return &RedisContainer{mongoC, mongoConnection}, nil
 }
