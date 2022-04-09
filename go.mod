@@ -1,4 +1,4 @@
-module dominikus1993/integrationtestcontainers-go
+module github.com/dominikus1993/integrationtestcontainers-go
 
 go 1.18
 
