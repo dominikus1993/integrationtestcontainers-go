@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func TestGetIdsThatExistsInDatabase(t *testing.T) {
+func TestMongoContainerPing(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -36,6 +36,17 @@ func TestGetIdsThatExistsInDatabase(t *testing.T) {
 	if err != nil {
 		t.Fatal(fmt.Errorf("error creating mongo client: %w", err))
 	}
+
+	err = mongoClient.Connect(ctx)
+	if err != nil {
+		t.Fatal(fmt.Errorf("error connectiong mongo client: %w", err))
+	}
+
+	t.Cleanup(func() {
+		if err := mongoClient.Disconnect(ctx); err != nil {
+			t.Fatalf("failed to disconnect container: %s", err)
+		}
+	})
 
 	subject := mongoClient.Ping(ctx, nil)
 	assert.NoError(t, subject)
