@@ -37,7 +37,11 @@ func TestGetIdsThatExistsInDatabase(t *testing.T) {
 		t.Fatal(fmt.Errorf("error creating mongo client: %w", err))
 	}
 
-	defer mongoClient.Disconnect(ctx)
+	t.Cleanup(func() {
+		if err := mongoClient.Disconnect(ctx); err != nil {
+			t.Fatalf("failed to disconnect mongo client: %s", err)
+		}
+	})
 
 	t.Run("Ping", func(t *testing.T) {
 		// Act
