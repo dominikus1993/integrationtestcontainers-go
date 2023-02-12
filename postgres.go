@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/docker/go-connections/nat"
+	"github.com/dominikus1993/integrationtestcontainers-go/common"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
@@ -33,9 +34,9 @@ type PostgresContainer struct {
 }
 
 func StartPostgreSqlContainer(ctx context.Context, config *PostgresContainerConfiguration) (*PostgresContainer, error) {
-	var port string = getValueOrDefault(fmt.Sprint(config.Port), "5432")
+	var port string = common.GetValueOrDefault(fmt.Sprint(config.Port), "5432")
 	req := testcontainers.ContainerRequest{
-		Image:        getValueOrDefault(config.Image, DefaultPostgresContainerConfiguration.Image),
+		Image:        common.GetValueOrDefault(config.Image, DefaultPostgresContainerConfiguration.Image),
 		ExposedPorts: []string{fmt.Sprintf("%d/tcp", config.ExposedPort)},
 		Env:          map[string]string{"POSTGRES_USER": config.Username, "POSTGRES_PASSWORD": config.Password, "POSTGRES_DB": config.Database},
 		WaitingFor:   wait.NewExecStrategy([]string{"pg_isready", "--host", "localhost", "--port", port}),
