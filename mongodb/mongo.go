@@ -31,7 +31,10 @@ func StartMongoDbContainer(ctx context.Context, config *MongoContainerConfigurat
 	req := testcontainers.ContainerRequest{
 		Image:        common.GetValueOrDefault(config.image, defaultMongoContainerConfiguration.image),
 		ExposedPorts: []string{fmt.Sprintf("%d/tcp", config.exposedPort)},
-		WaitingFor:   wait.NewExecStrategy([]string{"mongo", fmt.Sprintf("localhost:%d", config.port), "--eval", "db.runCommand(\"ping\").ok", "--quiet"}),
+		WaitingFor: wait.ForAll(
+			wait.ForLog("Waiting for connections"),
+			wait.ForListeningPort("27017/tcp"),
+		),
 	}
 	if config.username != "" && config.password != "" {
 		req.Env = map[string]string{"MONGO_INITDB_ROOT_USERNAME": config.username, "MONGO_INITDB_ROOT_PASSWORD": config.password}
