@@ -18,7 +18,7 @@ func TestMongoContainerPing(t *testing.T) {
 	// Arrange
 	ctx := context.Background()
 
-	container, err := StartMongoDbContainer(ctx, config)
+	container, err := StartContainer(ctx, config)
 	if err != nil {
 		t.Fatal(err)
 	}

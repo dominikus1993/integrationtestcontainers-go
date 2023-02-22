@@ -10,12 +10,12 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-type MongoContainer struct {
+type mongoContainer struct {
 	testcontainers.Container
 	config *MongoContainerConfiguration
 }
 
-func (container *MongoContainer) ConnectionString(ctx context.Context) (string, error) {
+func (container *mongoContainer) ConnectionString(ctx context.Context) (string, error) {
 	host, err := container.Host(ctx)
 	if err != nil {
 		return "", err
@@ -27,7 +27,7 @@ func (container *MongoContainer) ConnectionString(ctx context.Context) (string, 
 	return fmt.Sprintf("mongodb://%s:%s", host, port.Port()), nil
 }
 
-func StartMongoDbContainer(ctx context.Context, config *MongoContainerConfiguration) (*MongoContainer, error) {
+func StartContainer(ctx context.Context, config *MongoContainerConfiguration) (*mongoContainer, error) {
 	req := testcontainers.ContainerRequest{
 		Image:        common.GetValueOrDefault(config.image, defaultMongoContainerConfiguration.image),
 		ExposedPorts: []string{fmt.Sprintf("%d/tcp", config.exposedPort)},
@@ -47,5 +47,5 @@ func StartMongoDbContainer(ctx context.Context, config *MongoContainerConfigurat
 	if err != nil {
 		return nil, err
 	}
-	return &MongoContainer{mongoC, config}, nil
+	return &mongoContainer{mongoC, config}, nil
 }
