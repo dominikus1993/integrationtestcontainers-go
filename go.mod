@@ -5,8 +5,8 @@ go 1.20
 require (
 	github.com/docker/go-connections v0.4.0
 	github.com/stretchr/testify v1.8.1
-	github.com/testcontainers/testcontainers-go v0.17.0
-	go.mongodb.org/mongo-driver v1.11.1
+	github.com/testcontainers/testcontainers-go v0.18.0
+	go.mongodb.org/mongo-driver v1.11.2
 )
 
 require (
