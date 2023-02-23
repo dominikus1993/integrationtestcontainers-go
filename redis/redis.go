@@ -11,6 +11,7 @@ import (
 
 type redisContainer struct {
 	testcontainers.Container
+	config *RedisContainerConfiguration
 }
 
 func StartContainer(ctx context.Context, config *RedisContainerConfiguration) (*redisContainer, error) {
@@ -26,30 +27,21 @@ func StartContainer(ctx context.Context, config *RedisContainerConfiguration) (*
 	if err != nil {
 		return nil, err
 	}
+	return &redisContainer{container, config}, nil
+}
 
-	mappedPort, err := container.MappedPort(ctx)
+func (container *redisContainer) Url(ctx context.Context) (string, error) {
+	mappedPort, err := container.MappedPort(ctx, nat.Port(fmt.Sprint(container.config.port)))
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	hostIP, err := container.Host(ctx)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	uri := fmt.Sprintf("redis://%s:%s", hostIP, mappedPort.Port())
 
-	return &redisContainer{Container: container, URI: uri}, nil
-}
-
-func (container *redisContainer) Url(ctx context.Context) (string, error) {
-	host, err := container.Host(ctx)
-	if err != nil {
-		return "", err
-	}
-	port, err := container.MappedPort(ctx, nat.Port(fmt.Sprint(container.config.port)))
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("mongodb://%s:%s", host, port.Port()), nil
+	return uri, nil
 }
