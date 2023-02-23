@@ -41,7 +41,8 @@ func (container *redisContainer) Url(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	uri := fmt.Sprintf("redis://%s:%s", hostIP, mappedPort.Port())
+	port := mappedPort.Port()
+	uri := fmt.Sprintf("%s:%s", hostIP, port)
 
 	return uri, nil
 }
