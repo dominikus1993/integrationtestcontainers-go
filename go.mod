@@ -4,7 +4,8 @@ go 1.20
 
 require (
 	github.com/docker/go-connections v0.4.0
-	github.com/stretchr/testify v1.8.1
+	github.com/redis/go-redis/v9 v9.0.2
+	github.com/stretchr/testify v1.8.2
 	github.com/testcontainers/testcontainers-go v0.18.0
 	go.mongodb.org/mongo-driver v1.11.2
 )
@@ -37,7 +38,6 @@ require (
 	github.com/opencontainers/runc v1.1.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/redis/go-redis/v9 v9.0.2 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
