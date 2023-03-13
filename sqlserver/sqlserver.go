@@ -9,6 +9,8 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
+//var sql = []string{"/opt/mssql-tools/bin/sqlcmd", "-b", "-r", "1", "-U", config.username, "-P", config.password, "-i"}
+
 type msSqlContainer struct {
 	testcontainers.Container
 	config *SqlServerContainerConfiguration
@@ -18,7 +20,8 @@ func StartContainer(ctx context.Context, config *SqlServerContainerConfiguration
 	req := testcontainers.ContainerRequest{
 		Image:        config.image,
 		ExposedPorts: []string{fmt.Sprintf("%d/tcp", config.exposedPort)},
-		WaitingFor:   wait.ForLog("* Ready to accept connections"),
+		Env:          map[string]string{"SQLCMDUSER": config.username, "SQLCMDDBNAME": config.database, "MSSQL_SA_PASSWORD": config.password, "SQLCMDPASSWORD": config.password, "ACCEPT_EULA": "Y"},
+		WaitingFor:   wait.ForExec([]string{"/opt/mssql-tools/bin/sqlcmd", "-Q", "SELECT 1;"}),
 	}
 	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
@@ -42,7 +45,7 @@ func (container *msSqlContainer) ConnectionString(ctx context.Context) (string, 
 	}
 
 	port := mappedPort.Port()
-	uri := fmt.Sprintf("%s:%s", hostIP, port)
+	uri := fmt.Sprintf("sqlserver://%s:%s@%s?port=%s", container.config.username, container.config.password, hostIP, port)
 
 	return uri, nil
 }
