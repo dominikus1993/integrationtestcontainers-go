@@ -3,8 +3,11 @@ package sqlserver
 import (
 	"context"
 	"fmt"
+	"io"
+	"strings"
 
 	"github.com/docker/go-connections/nat"
+	"github.com/google/uuid"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
@@ -48,4 +51,20 @@ func (container *msSqlContainer) ConnectionString(ctx context.Context) (string, 
 	uri := fmt.Sprintf("sqlserver://%s:%s@%s?port=%s", container.config.username, container.config.password, hostIP, port)
 
 	return uri, nil
+}
+
+func (container *msSqlContainer) ExecCommand(ctx context.Context, scriptContent string) (string, error) {
+	scriptFilePath := strings.Join([]string{"./tmp", fmt.Sprintf("%s.sql", uuid.NewString())}, "/")
+	err := container.CopyToContainer(ctx, []byte(scriptContent), scriptFilePath, 493)
+	if err != nil {
+		return "", err
+	}
+	_, reader, err := container.Exec(ctx, []string{"/opt/mssql-tools/bin/sqlcmd", "-b", "-r", "1", "-U", container.config.username, "-P", container.config.password, "-i", scriptFilePath})
+	if err != nil {
+		return "", err
+	}
+	if b, err := io.ReadAll(reader); err == nil {
+		return string(b), nil
+	}
+	return "", err
 }
