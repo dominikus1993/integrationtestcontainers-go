@@ -10,7 +10,7 @@ require (
 	github.com/redis/go-redis/v9 v9.0.2
 	github.com/stretchr/testify v1.8.2
 	github.com/testcontainers/testcontainers-go v0.19.0
-	go.mongodb.org/mongo-driver v1.11.3
+	go.mongodb.org/mongo-driver v1.11.4
 )
 
 require (
