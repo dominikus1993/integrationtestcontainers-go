@@ -7,7 +7,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/microsoft/go-mssqldb v0.21.0
 	github.com/rabbitmq/amqp091-go v1.8.0
-	github.com/redis/go-redis/v9 v9.0.3
+	github.com/redis/go-redis/v9 v9.0.4
 	github.com/stretchr/testify v1.8.2
 	github.com/testcontainers/testcontainers-go v0.20.1
 	go.mongodb.org/mongo-driver v1.11.4
