@@ -32,12 +32,11 @@ func TestMongoContainerPing(t *testing.T) {
 	if err != nil {
 		t.Fatal(fmt.Errorf("can't download mongo conectionstring, %w", err))
 	}
-	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(connectionString))
+	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(connectionString))
 	if err != nil {
 		t.Fatal(fmt.Errorf("error creating mongo client: %w", err))
 	}
 
-	err = mongoClient.Connect(ctx)
 	if err != nil {
 		t.Fatal(fmt.Errorf("error connectiong mongo client: %w", err))
 	}
