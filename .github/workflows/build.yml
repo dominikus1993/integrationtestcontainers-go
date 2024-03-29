@@ -27,7 +27,7 @@ jobs:
     - name: Go Vet
       run: make vet
       
-    - uses: dominikh/staticcheck-action@v1.2.0
+    - uses: dominikh/staticcheck-action@v1
       name: staticcheck
       with:
         version: "2023.1"
