@@ -18,8 +18,9 @@ func StartContainer(ctx context.Context, config *RedisContainerConfiguration) (*
 	req := testcontainers.ContainerRequest{
 		Image:        config.image,
 		ExposedPorts: []string{fmt.Sprintf("%d/tcp", config.exposedPort)},
-		WaitingFor:   wait.ForLog("* Ready to accept connections"),
+		WaitingFor:   wait.ForExec([]string{"redis-cli", "ping"}),
 	}
+
 	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
 		Started:          true,

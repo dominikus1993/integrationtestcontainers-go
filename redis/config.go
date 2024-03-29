@@ -3,7 +3,7 @@ package redis
 import "github.com/dominikus1993/integrationtestcontainers-go/common"
 
 var defaultMongoContainerConfiguration = &RedisContainerConfiguration{
-	image:       "redis:6",
+	image:       "redis:7",
 	port:        6379,
 	exposedPort: 6379,
 }
