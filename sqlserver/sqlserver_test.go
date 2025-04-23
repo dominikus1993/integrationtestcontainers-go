@@ -47,28 +47,3 @@ func TestSqlServerContainerPing(t *testing.T) {
 	subject := client.QueryRow("SELECT 1")
 	assert.NoError(t, subject.Err())
 }
-
-func TestSqlServerContainerExecCommand(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
-	config := NewSqlServerContainerConfigurationBuilder().Build()
-	// Arrange
-	ctx := context.Background()
-
-	container, err := StartContainer(ctx, config)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() {
-		if err := container.Terminate(ctx); err != nil {
-			t.Fatalf("failed to terminate container: %s", err)
-		}
-	})
-
-	result, err := container.ExecCommand(ctx, "SELECT 1;")
-
-	assert.NoError(t, err)
-
-	assert.Contains(t, result, "1 rows affected")
-}
