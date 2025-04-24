@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"time"
 
 	"github.com/docker/go-connections/nat"
 	"github.com/google/uuid"
@@ -25,7 +24,7 @@ func StartContainer(ctx context.Context, config *SqlServerContainerConfiguration
 		Image:        config.image,
 		ExposedPorts: []string{fmt.Sprintf("%d/tcp", config.exposedPort)},
 		Env:          map[string]string{"SQLCMDUSER": config.username, "SQLCMDDBNAME": config.database, "MSSQL_SA_PASSWORD": config.password, "SQLCMDPASSWORD": config.password, "ACCEPT_EULA": "Y"},
-		WaitingFor:   wait.ForLog("Recovery is complete.").WithStartupTimeout(time.Minute),
+		WaitingFor:   wait.ForExec([]string{"/opt/mssql-tools/bin/sqlcmd", "-Q", "SELECT 1;"}),
 	}
 	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
