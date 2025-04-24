@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/docker/go-connections/nat"
 	"github.com/google/uuid"
 	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/mssql"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 //var sql = []string{"/opt/mssql-tools/bin/sqlcmd", "-b", "-r", "1", "-U", config.username, "-P", config.password, "-i"}
@@ -20,15 +21,20 @@ type msSqlContainer struct {
 }
 
 func StartContainer(ctx context.Context, config *SqlServerContainerConfiguration) (*msSqlContainer, error) {
-	mssqlContainer, err := mssql.Run(ctx,
-		config.image,
-		mssql.WithAcceptEULA(),
-		mssql.WithPassword(config.password),
-	)
+	req := testcontainers.ContainerRequest{
+		Image:        config.image,
+		ExposedPorts: []string{fmt.Sprintf("%d/tcp", config.exposedPort)},
+		Env:          map[string]string{"SQLCMDUSER": config.username, "SQLCMDDBNAME": config.database, "MSSQL_SA_PASSWORD": config.password, "SQLCMDPASSWORD": config.password, "ACCEPT_EULA": "Y"},
+		WaitingFor:   wait.ForLog("Recovery is complete.").WithStartupTimeout(time.Minute),
+	}
+	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
 	if err != nil {
 		return nil, err
 	}
-	return &msSqlContainer{mssqlContainer, config}, nil
+	return &msSqlContainer{container, config}, nil
 }
 
 func (container *msSqlContainer) ConnectionString(ctx context.Context) (string, error) {
