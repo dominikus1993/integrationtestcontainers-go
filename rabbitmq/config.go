@@ -3,7 +3,7 @@ package rabbitmq
 import "github.com/dominikus1993/integrationtestcontainers-go/common"
 
 var defaultRabbitMqContainerConfiguration = &RabbitMqContainerConfiguration{
-	image:       "rabbitmq:3.11",
+	image:       "rabbitmq:3.12.11-management-alpine",
 	port:        5672,
 	exposedPort: 5672,
 	username:    "guest",
