@@ -20,7 +20,8 @@ func (container *mongoContainer) ConnectionString(ctx context.Context) (string, 
 	if err != nil {
 		return "", err
 	}
-	port, err := container.MappedPort(ctx, nat.Port(fmt.Sprint(container.config.port)))
+	p := nat.Port(fmt.Sprint(container.config.port))
+	port, err := container.MappedPort(ctx, p.Port())
 	if err != nil {
 		return "", err
 	}

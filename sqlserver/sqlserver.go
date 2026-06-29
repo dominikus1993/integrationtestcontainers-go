@@ -37,7 +37,8 @@ func StartContainer(ctx context.Context, config *SqlServerContainerConfiguration
 }
 
 func (container *msSqlContainer) ConnectionString(ctx context.Context) (string, error) {
-	mappedPort, err := container.MappedPort(ctx, nat.Port(fmt.Sprint(container.config.port)))
+	p := nat.Port(fmt.Sprint(container.config.port))
+	mappedPort, err := container.MappedPort(ctx, p.Port())
 	if err != nil {
 		return "", err
 	}

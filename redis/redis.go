@@ -32,7 +32,8 @@ func StartContainer(ctx context.Context, config *RedisContainerConfiguration) (*
 }
 
 func (container *redisContainer) Url(ctx context.Context) (string, error) {
-	mappedPort, err := container.MappedPort(ctx, nat.Port(fmt.Sprint(container.config.port)))
+	p := nat.Port(fmt.Sprint(container.config.port))
+	mappedPort, err := container.MappedPort(ctx, p.Port())
 	if err != nil {
 		return "", err
 	}
